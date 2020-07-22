@@ -183,7 +183,7 @@
       });
       element.addTo(graph);
 
-      paper.on("element:button:pointerdown", function (elementView, evt) {
+      paper.on("element:button:pointerdown", (elementView, evt) => {
         evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
 
         var model = elementView.model;
@@ -199,8 +199,20 @@
         }
       });
 
-      // -----------
+      //       graph.set('graphCustomProperty', true);
+      // graph1.set('graphExportTime', Date.now());
+      // var jsonObject = graph1.toJSON();
+      //       console.log(graph.toJson());
 
+      // -----------
+/*
+      // write json
+      graph.on("all", (eventName, cell) => {
+        graph.set("graphCustomProperty", true);
+        graph.set("graphExportTime", Date.now());
+        console.log(graph.toJSON());
+      });
+*/  
       // -----------
 
       // graph.on("all", function (eventName, cell) {
