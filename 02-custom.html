@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"
+    />
+  </head>
+  <body>
+    <h2 style="text-align: center;">Custom</h2>
+    <!-- content -->
+    <div id="myholder"></div>
+
+    <!-- dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+
+    <!-- code -->
+    <script type="text/javascript">
+      console.log("hello jointjs");
+      var graph = new joint.dia.Graph();
+
+      var paper = new joint.dia.Paper({
+        el: document.getElementById("myholder"),
+        model: graph,
+        width: 1200,
+        height: 600,
+        gridSize: 10,
+        background: {
+          color: "rgba(0, 255, 0, 0.3)",
+        },
+      });
+
+      var rect = new joint.shapes.standard.Rectangle();
+      rect.position(150, 30);
+      rect.resize(220, 70);
+      rect.attr({
+        body: {
+          fill: "yellow",
+        },
+        label: {
+          text: "Click",
+          fill: "black",
+          fontSize: 22,
+          fontWeight: "bold",
+        },
+      });
+      rect.addTo(graph);
+
+      var rect2 = rect.clone();
+      rect2.translate(400, 0);
+      rect2.attr("label/text", "Me");
+      rect2.addTo(graph);
+
+      var link = new joint.shapes.standard.Link();
+      link.source(rect);
+      link.target(rect2);
+      link.addTo(graph);
+
+      // paper.on("blank:pointerdblclick", () => {
+      //   console.log("dbl click blank");
+      // });
+
+      // paper.on("element:pointerdblclick", (elementView) => {
+      //   // console.log({ elementView });
+      //   var currentElement = elementView.model;
+      //   currentElement.attr("body/stroke", "orange");
+      // });
+
+      // paper.on("element:pointerclick", (elementView) => {
+      //   console.log("click on element");
+      //   var currentElement = elementView.model;
+
+      //   currentElement.translate(40, 100);
+      // });
+
+      // graph.on("change:position", function (cell) {
+      //   if (cell instanceof joint.dia.Graph) return;
+      //   var center = cell.getBBox().center();
+      //   var label = center.toString();
+      //   cell.attr("label/text", label);
+      // });
+
+      // -----------
+      // custom
+
+      // body: {
+      //           fill: "yellow",
+      //         },
+      //         label: {
+      //           text: "Click",
+      //           fill: "black",
+      //           fontSize: 22,
+      //           fontWeight: "bold",
+      //         },
+
+      var CustomElement = joint.dia.Element.define(
+        "examples.CustomElement",
+        {
+          attrs: {
+            body: {
+              refWidth: "100%",
+              refHeight: "100%",
+              strokeWidth: 2,
+              stroke: "black",
+              fill: "white",
+            },
+            label: {
+              textVerticalAnchor: "middle",
+              textAnchor: "middle",
+              refX: "50%",
+              refY: "50%",
+              fontSize: 30,
+              fill: "black",
+            },
+            button: {
+              cursor: "pointer",
+              ref: "buttonLabel",
+              refWidth: "150%",
+              refHeight: "100%",
+              refX: "-25%",
+              refY: "25%",
+            },
+            buttonLabel: {
+              pointerEvents: "none",
+              refX: "100%",
+              refY: 0,
+              textAnchor: "middle",
+              textVerticalAnchor: "middle",
+            },
+          },
+        },
+        {
+          markup: [
+            {
+              tagName: "rect",
+              selector: "body",
+            },
+            {
+              tagName: "text",
+              selector: "label",
+            },
+            {
+              tagName: "rect",
+              selector: "button",
+            },
+            {
+              tagName: "text",
+              selector: "buttonLabel",
+            },
+          ],
+        }
+      );
+
+      var element = new CustomElement();
+      element.position(150, 200);
+      element.resize(300, 80);
+      element.attr({
+        label: {
+          pointerEvents: "none",
+          visibility: "visible",
+          text: "Element",
+        },
+        body: {
+          cursor: "default",
+          visibility: "visible",
+        },
+        button: {
+          event: "element:button:pointerdown",
+          fill: "aqua",
+          stroke: "black",
+          strokeWidth: 2,
+        },
+        buttonLabel: {
+          text: "...", // fullwidth underscore
+          fill: "black",
+          fontSize: 28,
+          fontWeight: "bold",
+        },
+      });
+      element.addTo(graph);
+
+      paper.on("element:button:pointerdown", function (elementView, evt) {
+        evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
+
+        var model = elementView.model;
+
+        if (model.attr("body/visibility") === "visible") {
+          model.attr("body/visibility", "hidden");
+          model.attr("label/visibility", "hidden");
+          model.attr("buttonLabel/text", "＋"); // fullwidth plus
+        } else {
+          model.attr("body/visibility", "visible");
+          model.attr("label/visibility", "visible");
+          model.attr("buttonLabel/text", "..."); // fullwidth underscore
+        }
+      });
+
+      // -----------
+
+      // -----------
+
+      // graph.on("all", function (eventName, cell) {
+      //   console.log(arguments);
+      // });
+    </script>
+  </body>
+</html>
