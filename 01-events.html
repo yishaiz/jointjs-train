@@ -28,7 +28,6 @@
         model: graph,
         width: 1200,
         height: 600,
-        // backgroundColor: 'yellow',
         gridSize: 10,
         background: {
           color: "rgba(0, 255, 0, 0.3)",
@@ -56,44 +55,6 @@
       rect2.attr("label/text", "Me");
       rect2.addTo(graph);
 
-      // var rect3 = rect.clone();
-      // rect3.translate(160, 50);
-      // rect3.attr('label/text', 'another element');
-      // rect3.attr('body/fill', 'yellow');
-      // // rect3.attr('label/font', '16');
-      // rect3.attr('label/fill', 'black');
-
-      // rect3.addTo(graph);
-
-      // var rect4 = new joint.shapes.standard.Rectangle();
-      // rect4.position(160, 180);
-      // rect4.resize(100, 40);
-      // rect4.attr({
-      //     body: {
-      //         fill: 'red',
-      //         // strokeWidth: 2,
-      //         rx: 5,
-      //         ry: 5,
-      //         strokeDasharray: '10,2'
-
-      //     },
-      //     label: {
-      //         text: 'elipsys',
-      //         fill: 'white',
-      //         fontSize: 22,
-      //         fontWeight: 'bold',
-      //         fontVariant: 'small-caps'
-      //     }
-      // });
-      // rect4.addTo(graph);
-
-      // rect4.translate(160, 150);
-      // rect4.attr('label/text', 'elipsis');
-      // rect4.attr('body/fill', 'red');
-      // // rect4.attr('label/fill', 'black');
-
-      // rect4.addTo(graph);
-
       var link = new joint.shapes.standard.Link();
       link.source(rect);
       link.target(rect2);
@@ -101,24 +62,13 @@
 
       paper.on("blank:pointerdblclick", () => {
         console.log("dbl click blank");
-
-        // paper.$background.drawBackground({
-        //   color: "orange",
-        // });
-
-        // this.drawBackground({
-        //   color: "orange",
-        // });
       });
 
       paper.on("element:pointerdblclick", (elementView) => {
-        // resetAll(this);
-
+        // console.log({ elementView });
         var currentElement = elementView.model;
         currentElement.attr("body/stroke", "orange");
       });
-
-      
     </script>
   </body>
 </html>

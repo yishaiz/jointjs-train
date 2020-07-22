@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css" />
-</head>
-<body>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"
+    />
+  </head>
+  <body>
     <!-- content -->
     <div id="myholder"></div>
 
@@ -15,86 +19,70 @@
 
     <!-- code -->
     <script type="text/javascript">
+      var graph = new joint.dia.Graph();
 
-        var graph = new joint.dia.Graph;
+      var paper = new joint.dia.Paper({
+        el: document.getElementById("myholder"),
+        model: graph,
+        width: 1200,
+        height: 600,
+        gridSize: 10,
+        background: {
+          color: "rgba(0, 255, 0, 0.3)",
+        },
+      });
 
-        var paper = new joint.dia.Paper({
-            el: document.getElementById('myholder'),
-            model: graph,
-            width: 1200,
-            height: 600,
-            // backgroundColor: 'yellow',
-            gridSize: 10,
-            background: {
-                color: 'rgba(0, 255, 0, 0.3)'
-            }
-        });
+      var rect = new joint.shapes.standard.Rectangle();
+      rect.position(150, 30);
+      rect.resize(100, 40);
+      rect.attr({
+        body: {
+          fill: "blue",
+        },
+        label: {
+          text: "Hello",
+          fill: "white",
+        },
+      });
+      rect.addTo(graph);
 
-        var rect = new joint.shapes.standard.Rectangle();
-        rect.position(150, 30);
-        rect.resize(100, 40);
-        rect.attr({
-            body: {
-                fill: 'blue'
-            },
-            label: {
-                text: 'Hello',
-                fill: 'white'
-            }
-        });
-        rect.addTo(graph);
+      var rect2 = rect.clone();
+      rect2.translate(300, 0);
+      rect2.attr("label/text", "World!");
+      rect2.addTo(graph);
 
-        var rect2 = rect.clone();
-        rect2.translate(300, 0);
-        rect2.attr('label/text', 'World!');
-        rect2.addTo(graph);
+      var rect3 = rect.clone();
+      rect3.translate(160, 50);
+      rect3.attr("label/text", "another element");
+      rect3.attr("body/fill", "yellow");
+      rect3.attr("label/fill", "black");
 
-        var rect3 = rect.clone();
-        rect3.translate(160, 50);
-        rect3.attr('label/text', 'another element');
-        rect3.attr('body/fill', 'yellow');
-        // rect3.attr('label/font', '16');
-        rect3.attr('label/fill', 'black');
+      rect3.addTo(graph);
 
-        rect3.addTo(graph);
+      var rect4 = new joint.shapes.standard.Rectangle();
+      rect4.position(160, 180);
+      rect4.resize(100, 40);
+      rect4.attr({
+        body: {
+          fill: "red",
+          rx: 5,
+          ry: 5,
+          strokeDasharray: "10,2",
+        },
+        label: {
+          text: "elipsys",
+          fill: "white",
+          fontSize: 22,
+          fontWeight: "bold",
+          fontVariant: "small-caps",
+        },
+      });
+      rect4.addTo(graph);
 
-
-        var rect4 = new joint.shapes.standard.Rectangle();
-        rect4.position(160, 180);
-        rect4.resize(100, 40);
-        rect4.attr({
-            body: {
-                fill: 'red',
-                // strokeWidth: 2,
-                rx: 5,
-                ry: 5,
-                strokeDasharray: '10,2'
-
-            },
-            label: {
-                text: 'elipsys',
-                fill: 'white',
-                fontSize: 22,
-                fontWeight: 'bold',
-                fontVariant: 'small-caps'
-            }
-        });
-        rect4.addTo(graph);
-
-
-        // rect4.translate(160, 150);
-        // rect4.attr('label/text', 'elipsis');
-        // rect4.attr('body/fill', 'red');
-        // // rect4.attr('label/fill', 'black');
-
-        // rect4.addTo(graph);
-
-
-        var link = new joint.shapes.standard.Link();
-        link.source(rect);
-        link.target(rect2);
-        link.addTo(graph);
-
+      var link = new joint.shapes.standard.Link();
+      link.source(rect);
+      link.target(rect2);
+      link.addTo(graph);
     </script>
-</body>
+  </body>
 </html>
