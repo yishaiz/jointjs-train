@@ -69,6 +69,24 @@
         var currentElement = elementView.model;
         currentElement.attr("body/stroke", "orange");
       });
+
+      paper.on("element:pointerclick", (elementView) => {
+        console.log("click on element");
+        var currentElement = elementView.model;
+
+        currentElement.translate(40, 100);
+      });
+
+      graph.on("change:position", function (cell) {
+        if (cell instanceof joint.dia.Graph) return;
+        var center = cell.getBBox().center();
+        var label = center.toString();
+        cell.attr("label/text", label);
+      });
+
+      // graph.on("all", function (eventName, cell) {
+      //   console.log(arguments);
+      // });
     </script>
   </body>
 </html>
