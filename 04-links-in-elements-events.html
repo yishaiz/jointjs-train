@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"
+    />
+  </head>
+  <body>
+    <h2 style="text-align: center;">elements with links with events</h2>
+    <!-- content -->
+    <div id="paper-hyperlinks"></div>
+
+    <!-- dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+
+    <!-- code -->
+    <script type="text/javascript">
+      console.log("hello jointjs with links in elements");
+
+      var graph = new joint.dia.Graph();
+
+      var paper = new joint.dia.Paper({
+        el: document.getElementById("paper-hyperlinks"),
+        model: graph,
+        width: 1200,
+        height: 600,
+        gridSize: 10,
+        background: {
+          color: "rgba(0, 255, 2550, 0.3)",
+        },
+      });
+
+      var rect = new joint.shapes.standard.Rectangle();
+      rect.position(150, 30);
+      rect.resize(220, 70);
+      rect.attr({
+        body: {
+          fill: "lightyellow",
+        },
+        label: {
+          text: "Click",
+          fill: "black",
+          fontSize: 22,
+          fontWeight: "bold",
+        },
+      });
+      rect.addTo(graph);
+
+      var rect2 = rect.clone();
+      rect2.translate(400, 0);
+      rect2.attr("label/text", "Me");
+      rect2.addTo(graph);
+
+      var link = new joint.shapes.standard.Link();
+      link.source(rect);
+      link.target(rect2);
+      link.addTo(graph);
+
+      // ----------------------------------------------------------------
+
+      var CustomElement = joint.dia.Element.define(
+        "examples.CustomElement",
+        {
+          attrs: {
+            body: {
+              refWidth: "100%",
+              refHeight: "100%",
+              strokeWidth: 2,
+              stroke: "black",
+              fill: "white",
+            },
+            label: {
+              textVerticalAnchor: "middle",
+              textAnchor: "middle",
+              refX: "50%",
+              refY: "50%",
+              fontSize: 30,
+              fill: "black",
+            },
+            button: {
+              cursor: "pointer",
+              ref: "buttonLabel",
+              refWidth: "150%",
+              refHeight: "100%",
+              refX: "-25%",
+              refY: "25%",
+            },
+            buttonLabel: {
+              pointerEvents: "none",
+              refX: "100%",
+              refY: 0,
+              textAnchor: "middle",
+              textVerticalAnchor: "middle",
+            },
+          },
+        },
+        {
+          markup: [
+            {
+              tagName: "rect",
+              selector: "body",
+            },
+            {
+              tagName: "text",
+              selector: "label",
+            },
+            {
+              tagName: "rect",
+              selector: "button",
+            },
+            {
+              tagName: "text",
+              selector: "buttonLabel",
+            },
+          ],
+        }
+      );
+
+      var element = new CustomElement();
+      element.position(150, 170);
+      element.resize(300, 80);
+      element.attr({
+        label: {
+          pointerEvents: "none",
+          visibility: "visible",
+          text: "Element",
+        },
+        body: {
+          cursor: "default",
+          visibility: "visible",
+        },
+        button: {
+          event: "element:button:pointerdown",
+          fill: "aqua",
+          stroke: "black",
+          strokeWidth: 2,
+        },
+        buttonLabel: {
+          text: "...", // fullwidth underscore
+          fill: "black",
+          fontSize: 28,
+          fontWeight: "bold",
+        },
+      });
+      element.addTo(graph);
+
+      paper.on("element:button:pointerdown", (elementView, evt) => {
+        evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
+
+        var model = elementView.model;
+
+        if (model.attr("body/visibility") === "visible") {
+          model.attr("body/visibility", "hidden");
+          model.attr("label/visibility", "hidden");
+          model.attr("buttonLabel/text", "＋"); // fullwidth plus
+        } else {
+          model.attr("body/visibility", "visible");
+          model.attr("label/visibility", "visible");
+          model.attr("buttonLabel/text", "..."); // fullwidth underscore
+        }
+      });
+
+      // ----------------------------------------------------------------
+
+      // first element
+      // (only the label is a hyperlink)
+      joint.shapes.standard.Rectangle.define(
+        "examples.HyperlinkLabelRectangle",
+        {
+          attrs: {
+            body: {
+              fill: "#ffffff",
+              stroke: "#000000",
+            },
+            link: {
+              refWidth: "100%",
+              refHeight: "100%",
+              xlinkShow: "new",
+              cursor: "pointer",
+            },
+            label: {
+              fill: "#0f05e0",
+              fontSize: 24,
+            },
+            button: {
+              cursor: "pointer",
+              ref: "buttonLabel",
+              refWidth: "150%",
+              refHeight: "100%",
+              refX: "-25%",
+              refY: "25%",
+              fill: "aqua",
+            },
+            buttonLabel: {
+              text: "...",
+              fill: "black",
+              fontSize: 28,
+              fontWeight: "bold",
+            },
+          },
+        },
+        {
+          markup: [
+            {
+              tagName: "rect",
+              selector: "body",
+            },
+            {
+              tagName: "dots",
+              selector: "buttonLabel",
+               
+            },
+            // {
+            //   tagName: "dots",
+            //   selector: "button",
+            //   children: [
+            //     {
+            //       tagName: "buttonLabel",
+            //       selector: "label",
+            //     },
+            //   ],
+            // },
+            {
+              // `link` envelops only `label`
+              tagName: "a",
+              selector: "link",
+              children: [
+                {
+                  tagName: "text",
+                  selector: "label",
+                },
+              ],
+            },
+          ],
+        }
+      );
+
+      var rect = new joint.shapes.examples.HyperlinkLabelRectangle();
+      rect.position(150, 320);
+      rect.resize(300, 80);
+      rect.attr({
+        link: {
+          xlinkHref: "https://jointjs.com",
+        },
+        label: {
+          text: "Label as link\nhttps://jointjs.com",
+        },
+        buttonLabel: {
+          text: "xxxxxxxxxx",
+        },
+      });
+      rect.addTo(graph);
+
+      // second element
+      // (the whole element is a hyperlink)
+      joint.shapes.standard.Rectangle.define(
+        "examples.HyperlinkRectangle",
+        {
+          attrs: {
+            link: {
+              xlinkShow: "new",
+              cursor: "pointer",
+            },
+            body: {
+              fill: "#ffffff",
+              stroke: "#7fa5f0",
+            },
+            label: {
+              fill: "#0fa500",
+              fontSize: 24,
+            },
+          },
+        },
+        {
+          markup: [
+            {
+              // `link` envelops both `body` and `label`
+              tagName: "a",
+              selector: "link",
+              children: [
+                {
+                  tagName: "rect",
+                  selector: "body",
+                },
+                {
+                  tagName: "text",
+                  selector: "label",
+                },
+              ],
+            },
+          ],
+        }
+      );
+
+      var rect2 = new joint.shapes.examples.HyperlinkRectangle();
+      rect2.position(545, 320);
+      rect2.resize(250, 80);
+      rect2.attr({
+        link: {
+          xlinkHref: "https://jointjs.com",
+        },
+        label: {
+          text: "Whole element as link\nhttps://jointjs.com",
+        },
+      });
+      rect2.addTo(graph);
+
+      var link = new joint.shapes.standard.Link();
+      link.source(rect);
+      link.target(rect2);
+      link.addTo(graph);
+
+      paper.on("cell:mouseenter", (elementView) => {
+        console.log("mouse eneter");
+        console.log({ elementView });
+        var currentElement = elementView.model;
+        currentElement.attr("body/stroke", "orange");
+      });
+
+      // paper.on("HyperlinkRectangle:mouseenter", (elementView) => {
+      //   console.log( 'mouse eneter');
+      //   console.log({ elementView });
+      //   var currentElement = elementView.model;
+      //   currentElement.attr("body/stroke", "orange");
+      // });
+
+      // paper.on("examples.HyperlinkRectangle:mouseenter", (elementView) => {
+      //   console.log( 'mouse eneter');
+      //   console.log({ elementView });
+      //   var currentElement = elementView.model;
+      //   currentElement.attr("body/stroke", "orange");
+      // });
+
+      // graph.on("all", (eventName, cell) => {
+      //   console.log({eventName, cell})
+      //   // graph.set("graphCustomProperty", true);
+      //   // graph.set("graphExportTime", Date.now());
+      //   // console.log(graph.toJSON());
+      // });
+
+      // paper.on("blank:pointerdblclick", () => {
+      //   console.log("dbl click blank");
+      // });
+
+      // paper.on("element:pointerclick", (elementView) => {
+      //   console.log("click on element");
+      //   var currentElement = elementView.model;
+
+      //   currentElement.translate(40, 100);
+      // });
+
+      // graph.on("change:position", function (cell) {
+      //   if (cell instanceof joint.dia.Graph) return;
+      //   var center = cell.getBBox().center();
+      //   var label = center.toString();
+      //   cell.attr("label/text", label);
+      // });
+
+      // -----------
+      // custom
+
+      // body: {
+      //           fill: "yellow",
+      //         },
+      //         label: {
+      //           text: "Click",
+      //           fill: "black",
+      //           fontSize: 22,
+      //           fontWeight: "bold",
+      //         },
+
+      //       graph.set('graphCustomProperty', true);
+      // graph1.set('graphExportTime', Date.now());
+      // var jsonObject = graph1.toJSON();
+      //       console.log(graph.toJson());
+
+      // -----------
+      /*
+      // write json
+      graph.on("all", (eventName, cell) => {
+        graph.set("graphCustomProperty", true);
+        graph.set("graphExportTime", Date.now());
+        console.log(graph.toJSON());
+      });
+*/
+      // -----------
+
+      // graph.on("all", function (eventName, cell) {
+      //   console.log(arguments);
+      // });
+    </script>
+  </body>
+</html>
